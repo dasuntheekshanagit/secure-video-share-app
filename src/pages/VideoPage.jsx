@@ -12,6 +12,7 @@ import Loading from "../components/Loading";
 import { useEffect, useState } from "react";
 import NotFocus from "./NotFocus";
 import { useUser } from "../contexts/UserProvider";
+import Iframe from "react-iframe";
 import CVPL from "../components/cvp";
 
 export default function VideoPage() {
@@ -20,6 +21,9 @@ export default function VideoPage() {
   const lessonref = doc(fireDB, tutsref.path, params.lname);
   // const [vurl, setvurl] = useState("");
   const [vurl, setvurl] = useState("http://localhost:3000/uploads/myVideo-1715438432526/output.m3u8");
+
+   const vdocipherUrl =
+    "https://player.vdocipher.com/v2/?otp=20160313versASE323kEQ7WlhPdtgexSZSV0Vc3HeVicmshvMl7O7EUJl0zRm0qx&playbackInfo=eyJ2aWRlb0lkIjoiMTczOGU1NmM1NzkyZTRhN2Y4YWNiZTg1ZGM4Mjk0OTkifQ==";
 
 
   const emailListref = collection(
@@ -124,11 +128,19 @@ export default function VideoPage() {
         >
           {tut.title} - {tut.lesson}
         </Typography>
-        {vurl ? (
-          <CVPL url={vurl} watermark={user.email} />
-        ) : (
-          <Box sx={{ width: "100%", aspectRatio: "16/9", bgcolor: "black" }} />
-        )}
+        { (
+         
+            <Iframe
+              url={vdocipherUrl}
+              width="100%"
+              height="480px"
+              id="myIframe"
+              display="initial"
+              position="relative"
+              className="vdocipher-player" />
+          
+
+        ) }
         <Typography
           variant="h5"
           sx={{
