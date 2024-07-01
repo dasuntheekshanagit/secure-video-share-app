@@ -1,7 +1,8 @@
 import { Backdrop, Box, Container, Typography } from "@mui/material";
 import Appbar from "../components/Appbar";
-import { fireDB, fireStorage } from "../../firebaseconfig";
-import { collection, doc } from "firebase/firestore";
+import { fireDB, fireStorage,  } from "../../firebaseconfig";
+import { collection, doc, getDoc } from "firebase/firestore";
+// import { getDoc } from "firebase/firestore"; // Import Firestore functions
 import {
   useCollectionData,
   useDocumentData,
@@ -13,6 +14,8 @@ import { useEffect, useState } from "react";
 import NotFocus from "./NotFocus";
 import { useUser } from "../contexts/UserProvider";
 import Iframe from "react-iframe";
+import { isMobile, isTablet } from "react-device-detect";
+
 import CVPL from "../components/cvp";
 
 export default function VideoPage() {
@@ -23,7 +26,7 @@ export default function VideoPage() {
   const [vurl, setvurl] = useState("http://localhost:3000/uploads/myVideo-1715438432526/output.m3u8");
 
    const vdocipherUrl =
-    "https://player.vdocipher.com/v2/?otp=20160313versASE323kEQ7WlhPdtgexSZSV0Vc3HeVicmshvMl7O7EUJl0zRm0qx&playbackInfo=eyJ2aWRlb0lkIjoiMTczOGU1NmM1NzkyZTRhN2Y4YWNiZTg1ZGM4Mjk0OTkifQ==";
+    "";
 
 
   const emailListref = collection(
@@ -40,26 +43,57 @@ export default function VideoPage() {
   const [tut, loading] = useDocumentData(lessonref);
 
   const [focused, setFocused] = useState(true);
+  const [deviceWarning, setDeviceWarning] = useState(false);
 
-  // useEffect(() => {
-  //   async function geturl() {
-  //     if (tut) {
-  //       const vref = ref(
-  //         fireStorage,
-  //         `videos/${params.fname}/${params.lname}/${tut.video}`
-  //       );
-  //       await getDownloadURL(vref)
-  //         .then((url) => {
-  //           setvurl(url);
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //         });
-  //     }
-  //   }
 
-  //   geturl();
-  // }, [tut, loading, params.fname, params.lname]);
+  // console.log("vurl", tut.vurl);
+
+  useEffect(() => {
+
+    if (isMobile || isTablet) {
+      setDeviceWarning(true);
+    }
+    
+
+async function getUrl() {
+  if (tut) {
+    // Create a reference to the Firestore document
+    const docRef = doc(fireDB, "folders", params.fname, "tutorials", params.lname);
+    try {
+      // Fetch the document
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        // Use the document data
+        setvurl(docSnap.data().vurl); // Assuming the document has a field named 'url'
+        // console.log('====================================');
+        // console.log(docSnap.data().vurl);
+        // console.log('====================================');
+      } else {
+        console.log("No such document!");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
+    // async function geturl() {
+    //   if (tut) {
+    //     const vref = ref(
+    //       fireStorage,
+    //       `videos/${params.fname}/${params.lname}/${tut.video}`
+    //     );
+    //     await getDownloadURL(vref)
+    //       .then((url) => {
+    //         setvurl(url);
+    //       })
+    //       .catch((err) => {
+    //         console.log(err);
+    //       });
+    //   }
+    // }
+
+    getUrl();
+  }, [tut, loading, params.fname, params.lname]);
 
   if (loading) {
     return <Loading text="Loading Document" />;
@@ -128,10 +162,17 @@ export default function VideoPage() {
         >
           {tut.title} - {tut.lesson}
         </Typography>
-        { (
+        { deviceWarning ? (
+           <Typography
+            variant="h6"
+            sx={{ color: "red", textAlign: "center", mt: 2 }}
+          >
+            Mobile phones and tablets are not allowed to play this video.
+          </Typography>
+           ) : (
          
             <Iframe
-              url={vdocipherUrl}
+              url={vurl}
               width="100%"
               height="480px"
               id="myIframe"
