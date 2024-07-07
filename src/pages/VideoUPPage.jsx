@@ -35,6 +35,7 @@ export default function VideoUPPage() {
     description: "",
     lesson: "",
     date: "",
+    VUrl: "",
   });
   const [uploadFile, uploading, snapshot] = useUploadFile();
 
@@ -97,6 +98,7 @@ export default function VideoUPPage() {
         description: values.description,
         lesson: values.lesson,
         date: values.date,
+        vurl: values.VUrl,
       });
     } catch (err) {
       console.log(err);
@@ -195,6 +197,14 @@ export default function VideoUPPage() {
           }}
           name="vdup"
           inerror={values.video === null}
+        />
+        <TextField
+          label="VUrl"
+          placeholder="VUrl"
+          variant="filled"
+          required
+          name="VUrl"
+          onChange={handleInputs}
         />
 
         <TextField
