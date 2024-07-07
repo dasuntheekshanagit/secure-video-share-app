@@ -162,6 +162,7 @@ async function getUrl() {
         >
           {tut.title} - {tut.lesson}
         </Typography>
+
         { deviceWarning ? (
            <Typography
             variant="h6"
@@ -182,6 +183,7 @@ async function getUrl() {
           
 
         ) }
+
         <Typography
           variant="h5"
           sx={{
