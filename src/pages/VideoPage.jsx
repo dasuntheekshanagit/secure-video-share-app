@@ -23,7 +23,7 @@ export default function VideoPage() {
   const tutsref = collection(fireDB, "folders", params.fname, "tutorials");
   const lessonref = doc(fireDB, tutsref.path, params.lname);
   // const [vurl, setvurl] = useState("");
-  const [vurl, setvurl] = useState("http://localhost:3000/uploads/myVideo-1715438432526/output.m3u8");
+  const [vurl, setvurl] = useState("");
 
    const vdocipherUrl =
     "";
